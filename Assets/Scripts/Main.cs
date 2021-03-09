@@ -8,6 +8,7 @@ public class Main : MonoBehaviour
 {
     [SerializeField]
     private TMP_Text hiUser;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +18,6 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SimpleJSON;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -57,9 +59,25 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    public JSONObject LoadEvent(int eventIndex)
     {
-        
+        string eventIndexStr = eventIndex.ToString();
+        string path = Application.persistentDataPath + "/Eventos.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject events = (JSONObject)JSON.Parse(jsonString);
+        JSONObject evento = (JSONObject)JSON.Parse(events[eventIndex].ToString());
+        return evento;
+        //test.text = events[eventIndex].ToString();
+        //evento[property].ToString();
+    }
+
+    public string LoadEventProperty(int eventIndex, string property)
+    {
+        string eventIndexStr = eventIndex.ToString();
+        string path = Application.persistentDataPath + "/Eventos.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject events = (JSONObject)JSON.Parse(jsonString);
+        JSONObject evento = (JSONObject)JSON.Parse(events[eventIndex].ToString());
+        return evento[property].ToString();
     }
 }
