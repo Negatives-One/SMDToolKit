@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
 using System.IO;
+using Unity.Notifications.Android;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,6 +35,8 @@ public class GameManager : MonoBehaviour
 
     private int TargetScene;
 
+    public int NumeroEventos;
+
     public int GetLoadingSceneNumber
     {
         get { return LoadingSceneNumber; }
@@ -56,7 +59,33 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (!File.Exists(Application.persistentDataPath + "/Eventos.json"))
+        {
+            NumeroEventos = 0;
+        }
+        else
+        {
+            string path = Application.persistentDataPath + "/Eventos.json";
+            string jsonString = File.ReadAllText(path);
+            JSONObject events = (JSONObject)JSON.Parse(jsonString);
+            NumeroEventos = events.Count;
+        }
+    }
 
+    //public string LoadProperty(string property)
+    //{
+    //    string path = Application.persistentDataPath + "/Dados.json";
+    //    string jsonString = File.ReadAllText(path);
+    //    JSONObject dados = (JSONObject)JSON.Parse(jsonString);
+    //    return dados[property].ToString();
+    //}
+
+    public void UpdateCount()
+    {
+        string path = Application.persistentDataPath + "/Eventos.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject events = (JSONObject)JSON.Parse(jsonString);
+        NumeroEventos = events.Count;
     }
 
     public JSONObject LoadEvent(int eventIndex)
@@ -78,6 +107,74 @@ public class GameManager : MonoBehaviour
         string jsonString = File.ReadAllText(path);
         JSONObject events = (JSONObject)JSON.Parse(jsonString);
         JSONObject evento = (JSONObject)JSON.Parse(events[eventIndex].ToString());
-        return evento[property].ToString();
+        return evento[property];
+    }
+
+    public void UpdateEvent(int eventIndex, JSONObject createdEvent)
+    {
+        string eventIndexStr = eventIndex.ToString();
+        string path = Application.persistentDataPath + "/Eventos.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject events = (JSONObject)JSON.Parse(jsonString);
+        events.Add(eventIndex.ToString(), createdEvent);
+    }
+
+    public void RemoveEvent(int eventIndex)
+    {
+        if(eventIndex < NumeroEventos)
+        {
+            string path = Application.persistentDataPath + "/Eventos.json";
+            string jsonString = File.ReadAllText(path);
+            JSONObject events = (JSONObject)JSON.Parse(jsonString);
+            JSONObject newEvents = new JSONObject();
+            for (int i = 0; i < NumeroEventos; i++)
+            {
+                if(i != eventIndex)
+                {
+                    if(i < eventIndex)
+                    {
+                        newEvents.Add(i.ToString(), LoadEvent(i));
+                    }
+                    else
+                    {
+                        newEvents.Add((i - 1).ToString(), LoadEvent(i));
+                    }
+                }
+            }
+            File.WriteAllText(path, newEvents.ToString());
+            UpdateCount();
+        }
+    }
+
+    public void Notify(string title, string text, System.DateTime date)
+    {
+        AndroidNotificationCenter.CancelAllDisplayedNotifications();
+        var channel = new AndroidNotificationChannel()
+        {
+            Id = "channel_id",
+            Name = "Default Channel",
+            Importance = Importance.Default,
+            Description = "Generic notifications",
+        };
+        AndroidNotificationCenter.RegisterNotificationChannel(channel);
+
+        var notification = new AndroidNotification();
+        notification.Title = title;
+        notification.Text = text;
+        notification.FireTime = System.DateTime.Now.AddSeconds(5);
+
+        var id = AndroidNotificationCenter.SendNotification(notification, "channel_id");
+        
+        if(AndroidNotificationCenter.CheckScheduledNotificationStatus(id) == NotificationStatus.Scheduled)
+        {
+            AndroidNotificationCenter.CancelAllNotifications();
+            AndroidNotificationCenter.SendNotification(notification, "channel_id");
+        }
+    }
+
+    public void DeleteSave()
+    {
+        File.Delete(Application.persistentDataPath + "/Eventos.json");
+        File.Delete(Application.persistentDataPath + "/Dados.json");
     }
 }

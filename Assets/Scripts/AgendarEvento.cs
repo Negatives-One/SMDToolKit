@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using SimpleJSON;
 using System.IO;
+using System;
+using System.Globalization;
 
 public class AgendarEvento : MonoBehaviour
 {
@@ -25,34 +27,70 @@ public class AgendarEvento : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            string datinha = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
+            //DateTime myDate = DateTime.ParseExact(datinha, "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture);
+            Debug.Log(datinha);
+        }
+    }
+
     public void SaveEvent()
     {
-        if(nameField.text.Length > 0 && dataLabel.text != "Nenhuma Data Selecionada" && timeLabel.text != "Nenhum Horário Selecionado")
-        {
-            JSONObject eventJSON = new JSONObject();
-            eventJSON.Add("nome", nameField.text);
-            eventJSON.Add("data", dataLabel.text);
-            eventJSON.Add("hora", timeLabel.text);
-            //dict = new Dictionary<int, object>();
-            //Dictionary<string, string> evento = new Dictionary<string, string>();
-            //evento.Add("nome", nameField.text);
-            //evento.Add("data", dataLabel.text);
-            //evento.Add("hora", timeLabel.text);
-            //dict.Add(0, evento);
-            //int key = 1;
-            ////((Dictionary<string, int>)dict[key]).Add("100", 100);
+        if(File.Exists(Application.persistentDataPath + "/Eventos.json")){
+            if (nameField.text.Length > 0 && dataLabel.text != "Nenhuma Data Selecionada" && timeLabel.text != "Nenhum Horário Selecionado")
+            {
+                JSONObject eventJSON = new JSONObject();
+                eventJSON.Add("nome", nameField.text);
+                eventJSON.Add("data", dataLabel.text);
+                eventJSON.Add("hora", timeLabel.text);
+                int eventIndex = GameManager.Instance.NumeroEventos;
+                string path = Application.persistentDataPath + "/Eventos.json";
+                string jsonString = File.ReadAllText(path);
+                JSONObject file = (JSONObject)JSON.Parse(jsonString);
+                file.Add(eventIndex.ToString(), eventJSON);
 
-            JSONObject events = new JSONObject();
-            events.Add("0", eventJSON);
-
-            string path = Application.persistentDataPath + "/Eventos.json";
-            File.WriteAllText(path, events.ToString());
+                //string path = Application.persistentDataPath + "/Eventos.json";
+                File.WriteAllText(path, file.ToString());
+                GameManager.Instance.UpdateCount();
+            }
         }
+        else
+        {
+            if (nameField.text.Length > 0 && dataLabel.text != "Nenhuma Data Selecionada" && timeLabel.text != "Nenhum Horário Selecionado")
+            {
+                JSONObject eventJSON = new JSONObject();
+                eventJSON.Add("nome", nameField.text);
+                eventJSON.Add("data", dataLabel.text);
+                eventJSON.Add("hora", timeLabel.text);
+                JSONObject events = new JSONObject();
+                events.Add("0", eventJSON);
+
+                string path = Application.persistentDataPath + "/Eventos.json";
+                File.WriteAllText(path, events.ToString());
+                GameManager.Instance.UpdateCount();
+            }
+        }
+        string dataHora = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
+        DateTime dataHoraOK = DateTime.ParseExact(dataHora, "yyyy/MM/dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        GameManager.Instance.Notify("Oi", "Clica aí", dataHoraOK);
     }
 
     public void Teste()
     {
-        dataLabel.text = "datinha";
-        timeLabel.text = "horinha";
+        dataLabel.text = System.DateTime.Now.ToString("yyyy/MM/dd");
+        timeLabel.text = System.DateTime.Now.ToString("HH:mm");
+    }
+
+    public void DeleteSave()
+    {
+        GameManager.Instance.DeleteSave();
+    }
+
+    public void Notify()
+    {
+        GameManager.Instance.Notify("Oi","Tchau", DateTime.Now);
     }
 }
