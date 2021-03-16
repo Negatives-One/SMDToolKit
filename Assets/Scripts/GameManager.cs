@@ -4,6 +4,7 @@ using UnityEngine;
 using SimpleJSON;
 using System.IO;
 using Unity.Notifications.Android;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -143,10 +144,11 @@ public class GameManager : MonoBehaviour
             }
             File.WriteAllText(path, newEvents.ToString());
             UpdateCount();
+            UpdateNotifications();
         }
     }
 
-    public void Notify(string title, string text, System.DateTime date)
+    public void Notify(string title, string text, DateTime date)
     {
         AndroidNotificationCenter.CancelAllDisplayedNotifications();
         var channel = new AndroidNotificationChannel()
@@ -161,7 +163,7 @@ public class GameManager : MonoBehaviour
         var notification = new AndroidNotification();
         notification.Title = title;
         notification.Text = text;
-        notification.FireTime = System.DateTime.Now.AddSeconds(5);
+        notification.FireTime = date;
 
         var id = AndroidNotificationCenter.SendNotification(notification, "channel_id");
         
@@ -172,9 +174,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void UpdateNotifications()
+    {
+        AndroidNotificationCenter.CancelAllNotifications();
+        for(int i = 0; i < NumeroEventos; i++)
+        {
+            JSONObject evento = LoadEvent(i);
+            DateTime myDate = stringToDateTime(evento["data"], evento["hora"]);// DateTime.ParseExact(evento["data"], "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture);
+            if(!HasPassed(myDate, DateTime.Now))
+            {
+                Notify(evento["nome"], string.Empty, myDate);
+            }
+        }
+    }
+    public bool HasPassed(DateTime fromDate, DateTime expireDate)
+    {
+        return expireDate - fromDate > TimeSpan.FromSeconds(1);
+    }
+
     public void DeleteSave()
     {
         File.Delete(Application.persistentDataPath + "/Eventos.json");
         File.Delete(Application.persistentDataPath + "/Dados.json");
+    }
+
+
+    public DateTime stringToDateTime(string data, string hora)
+    {
+        string datinha = data.ToString() + " " + hora.ToString();
+        DateTime myDate = DateTime.Parse(datinha.ToString(), System.Globalization.CultureInfo.InvariantCulture);
+        return myDate;
     }
 }

@@ -29,12 +29,11 @@ public class AgendarEvento : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            string datinha = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
-            //DateTime myDate = DateTime.ParseExact(datinha, "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture);
-            Debug.Log(datinha);
-        }
+    }
+
+    public void UpdateNotifications()
+    {
+        GameManager.Instance.UpdateNotifications();
     }
 
     public void SaveEvent()
@@ -73,9 +72,10 @@ public class AgendarEvento : MonoBehaviour
                 GameManager.Instance.UpdateCount();
             }
         }
-        string dataHora = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
-        DateTime dataHoraOK = DateTime.ParseExact(dataHora, "yyyy/MM/dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-        GameManager.Instance.Notify("Oi", "Clica aí", dataHoraOK);
+        DateTime dataHoraOk = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "data"), GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "hora"));
+        //string dataHora = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
+        //DateTime dataHoraOK = DateTime.ParseExact(dataHora, "yyyy/MM/dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+        GameManager.Instance.Notify(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "nome"), string.Empty, dataHoraOk);
     }
 
     public void Teste()

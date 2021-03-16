@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using System;
 
 public class Main : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class Main : MonoBehaviour
     private TMP_Text hiUser;
     [SerializeField]
     private GameObject legendas;
+    [SerializeField]
+    private TMP_Dropdown dropdown;
     
     // Start is called before the first frame update
     void Start()
@@ -19,26 +22,26 @@ public class Main : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        Debug.Log(EventSystem.current.IsPointerOverGameObject());
-        if (Input.touchCount <= 1)
-        {
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
+    //void Update()
+    //{
+    //    //Debug.Log(EventSystem.current.IsPointerOverGameObject());
+    //    if (Input.touchCount <= 1)
+    //    {
+    //        if (EventSystem.current.IsPointerOverGameObject())
+    //        {
+    //            return;
+    //        }
 
-            //checar se clicou num movel
-            InteractObjects();
-        }
+    //        //checar se clicou num movel
+    //        InteractObjects();
+    //    }
         
-        //fechar legenda
-        if (Input.touchCount > 0 || Input.GetMouseButtonDown(0) && legendas.activeSelf == true)
-        {
-            legendas.SetActive(false);
-        }
-    }
+    //    //fechar legenda
+    //    if (Input.touchCount > 0 || Input.GetMouseButtonDown(0) && legendas.activeSelf == true)
+    //    {
+    //        legendas.SetActive(false);
+    //    }
+    //}
 
     private void InteractObjects()
     {
@@ -63,5 +66,25 @@ public class Main : MonoBehaviour
     public void ShowLegenda()
     {
         legendas.SetActive(!legendas.activeSelf);
+    }
+
+    public void ShowApagar()
+    {
+        if(GameManager.Instance.NumeroEventos > 0)
+        {
+            dropdown.ClearOptions();
+            List<string> m_DropOptions = new List<string>();
+            for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
+            {
+                m_DropOptions.Add(i.ToString());
+            }
+            dropdown.AddOptions(m_DropOptions);
+        }
+    }
+
+    public void Delete()
+    {
+        Debug.Log(dropdown.value);
+        GameManager.Instance.RemoveEvent(dropdown.value);
     }
 }
