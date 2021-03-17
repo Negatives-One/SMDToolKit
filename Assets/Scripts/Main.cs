@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System;
+using SimpleJSON;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
@@ -14,6 +16,11 @@ public class Main : MonoBehaviour
     private GameObject legendas;
     [SerializeField]
     private TMP_Dropdown dropdown;
+
+    [SerializeField]
+    private GameObject calendario;
+    [SerializeField]
+    private GameObject eventCard;
     
     // Start is called before the first frame update
     void Start()
@@ -86,5 +93,36 @@ public class Main : MonoBehaviour
     {
         Debug.Log(dropdown.value);
         GameManager.Instance.RemoveEvent(dropdown.value);
+    }
+
+    public void ShowCallendar()
+    {
+        calendario.SetActive(true);
+        UpdateCalendar();
+    }
+
+    private void UpdateCalendar()
+    {
+        GameObject content = calendario.transform.GetChild(0).gameObject;
+        GameObject text = new GameObject();
+        text.AddComponent<CanvasRenderer>();
+        text.AddComponent<RectTransform>();
+        Text t = text.AddComponent<Text>();
+        Instantiate(text, content.transform.position, Quaternion.identity, content.transform);
+        text.GetComponent<Text>().text = "Março";
+        text.GetComponent<Text>().color = Color.black;
+        Debug.Log(content.GetComponent<RectTransform>());
+        for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
+        {
+            JSONObject evento = GameManager.Instance.LoadEvent(i);
+            GameObject card = Instantiate(eventCard, content.transform.position, Quaternion.identity, content.transform);
+            GameObject nome = card.transform.GetChild(0).gameObject; //nome
+            GameObject data = card.transform.GetChild(1).gameObject; //data
+            GameObject hora = card.transform.GetChild(2).gameObject; //hora
+
+            nome.GetComponent<TMP_Text>().text = evento["nome"];
+            data.GetComponent<TMP_Text>().text = evento["data"];
+            hora.GetComponent<TMP_Text>().text = evento["hora"];
+        }
     }
 }

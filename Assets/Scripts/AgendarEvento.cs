@@ -80,8 +80,8 @@ public class AgendarEvento : MonoBehaviour
 
     public void Teste()
     {
-        dataLabel.text = System.DateTime.Now.ToString("yyyy/MM/dd");
-        timeLabel.text = System.DateTime.Now.ToString("HH:mm");
+        dataLabel.text = DateTime.Now.ToString("yyyy/MM/dd");
+        timeLabel.text = DateTime.Now.ToString("HH:mm");
     }
 
     public void DeleteSave()
