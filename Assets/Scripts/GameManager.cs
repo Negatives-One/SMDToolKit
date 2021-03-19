@@ -206,4 +206,12 @@ public class GameManager : MonoBehaviour
         DateTime myDate = DateTime.Parse(datinha.ToString(), System.Globalization.CultureInfo.InvariantCulture);
         return myDate;
     }
+
+    public JSONObject LoadRoom()
+    {
+        string path = Application.persistentDataPath + "/Quarto.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject room = (JSONObject)JSON.Parse(jsonString);
+        return room;
+    }
 }
