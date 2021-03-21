@@ -25,11 +25,14 @@ public class Main : MonoBehaviour
     [SerializeField]
     private GameObject eventCard;
 
-
     [SerializeField]
-    private GameObject customizationPanel;
+    private GameObject config;
     [SerializeField]
-    private GameObject movelSelectionCard;
+    private GameObject gear;
+    [SerializeField]
+    private Sprite gearB;
+    [SerializeField]
+    private Sprite gearL;
 
     // Start is called before the first frame update
     void Start()
@@ -128,111 +131,22 @@ public class Main : MonoBehaviour
         }
     }
 
-    public void ShowRoomCustomization()
+    public void GearButton()
     {
-        int numMovel = 6;
-        string[] moveis = { "Mesa", "Quadro", "Prateleira", "Cama", "Armario", "Janela" };
-        string[] nomeSkin = { "Mesa Diferente", "Quadro Diferente", "Prateleira Diferente", "Cama Diferente", "Armário Diferente", "Janela Diferente" };
-
-        if (File.Exists(Application.persistentDataPath + "/Quarto.json"))
+        if (config.activeSelf)
         {
-            JSONObject room = GameManager.Instance.LoadRoom();
-            GameObject content = customizationPanel.transform.GetChild(0).gameObject;
-            float windowSize = -(1440 - ((220 * numMovel) + (20 * numMovel + 1)) + 200);
-            content.GetComponent<RectTransform>().offsetMin = new Vector2(content.GetComponent<RectTransform>().offsetMin.x, windowSize); ;
-            for (int i = 0; i < numMovel; i++)
-            {
-                GameObject card = Instantiate(movelSelectionCard, content.transform.position, Quaternion.identity, content.transform);
-                GameObject text = card.transform.GetChild(0).gameObject;
-                text.GetComponent<TMP_Text>().text = moveis[i];
-                TMP_Dropdown dropdown = card.transform.GetChild(1).gameObject.GetComponent<TMP_Dropdown>();
-                dropdown.options.Clear();
-
-                List<string> items = new List<string>();
-                items.Add("Normal");
-                items.Add(nomeSkin[i]);
-
-                foreach (var item in items)
-                {
-                    TMP_Dropdown.OptionData a = new TMP_Dropdown.OptionData();
-                    a.text = item;
-                    dropdown.options.Add(a);
-                }
-                dropdown.value = room[moveis[i]];
-            }
+            config.SetActive(false);
+            gear.GetComponent<Image>().sprite = gearB;//.color = Color.white;//(255f, 255f, 255f);
         }
         else
         {
-            GameObject content = customizationPanel.transform.GetChild(0).gameObject;
-            float windowSize = -(1440 - ((220 * numMovel) + (20 * numMovel + 1)) + 200);
-            content.GetComponent<RectTransform>().offsetMin = new Vector2(content.GetComponent<RectTransform>().offsetMin.x, windowSize); ;
-            for (int i = 0; i < numMovel; i++)
-            {
-                GameObject card = Instantiate(movelSelectionCard, content.transform.position, Quaternion.identity, content.transform);
-                GameObject text = card.transform.GetChild(0).gameObject;
-                text.GetComponent<TMP_Text>().text = moveis[i];
-                TMP_Dropdown dropdown = card.transform.GetChild(1).gameObject.GetComponent<TMP_Dropdown>();
-                dropdown.options.Clear();
-
-                List<string> items = new List<string>();
-                items.Add("Normal");
-                items.Add(nomeSkin[i]);
-
-                foreach (var item in items)
-                {
-                    TMP_Dropdown.OptionData a = new TMP_Dropdown.OptionData();
-                    a.text = item;
-                    dropdown.options.Add(a);
-                }
-            }
+            config.SetActive(true);
+            gear.GetComponent<Image>().sprite = gearL;//.color = Color.cyan;// (219f, 125f, 71f);
         }
     }
 
-    private int[] GetRoomList()
+    public void Quit()
     {
-        int[] lista = new int[6];
-
-        for (int i = 0; i < 6; i++)
-        {
-            GameObject content = customizationPanel.transform.GetChild(0).gameObject;
-            GameObject movelPanel = content.transform.GetChild(i + 1).gameObject;
-            TMP_Dropdown dropdown = movelPanel.transform.GetChild(1).gameObject.GetComponent<TMP_Dropdown>();
-
-            int index = dropdown.value;
-            lista[i] = index;
-                //dropdown.options[index].text;
-        }
-        return lista;
-    }
-
-    public void SaveRoom()
-    {
-        int[] roomData = GetRoomList();
-
-        JSONObject roomJSON = new JSONObject();
-
-        roomJSON.Add("Mesa", roomData[0]);
-        roomJSON.Add("Quadro", roomData[1]);
-        roomJSON.Add("Prateleira", roomData[2]);
-        roomJSON.Add("Cama", roomData[3]);
-        roomJSON.Add("Armario", roomData[4]);
-        roomJSON.Add("Janela", roomData[5]);
-
-        string path = Application.persistentDataPath + "/Quarto.json";
-
-        File.WriteAllText(path, roomJSON.ToString());
-        quartinho.UpdateRoom();
-    }
-
-    public void ClearRoomCardContent()
-    {
-        GameObject content = customizationPanel.transform.GetChild(0).gameObject;
-        for(int i = 0; i < content.transform.childCount; i++)
-        {
-            if( i > 0)
-            {
-                Destroy(content.transform.GetChild(i).gameObject);
-            }
-        }
+        Application.Quit();
     }
 }

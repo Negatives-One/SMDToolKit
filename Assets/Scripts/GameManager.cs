@@ -60,6 +60,21 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(!File.Exists(Application.persistentDataPath + "/Quarto.json"))
+        {
+            JSONObject roomJSON = new JSONObject();
+
+            roomJSON.Add("Mesa", 0);
+            roomJSON.Add("Quadro", 0);
+            roomJSON.Add("Prateleira", 0);
+            roomJSON.Add("Cama", 0);
+            roomJSON.Add("Armario", 0);
+            roomJSON.Add("Janela", 0);
+
+            string path = Application.persistentDataPath + "/Quarto.json";
+            File.WriteAllText(path, roomJSON.ToString());
+        }
+
         if (!File.Exists(Application.persistentDataPath + "/Eventos.json"))
         {
             NumeroEventos = 0;
