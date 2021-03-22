@@ -15,7 +15,7 @@ namespace FantomLib
     /// (Theme[Style])
     /// https://developer.android.com/reference/android/R.style.html#Theme
     /// </summary>
-    public class DatePickerController : MonoBehaviour
+    public class DatePickerControllerFinal : MonoBehaviour
     {
         //Inspector Settings
         public string defaultDate = "";                 //When it is empty, it is the current time.
@@ -70,7 +70,7 @@ namespace FantomLib
             if (OnResult != null)
             {
                 string data = DateTime.Parse(result).ToString("dd/MM/yyyy");
-                GameObject.Find("ResultadoDaData").GetComponent<TMP_Text>().text = result;
+                GameObject.Find("ResultadoDaDataFinal").GetComponent<TMP_Text>().text = result;
             }
                 //OnResult.Invoke(result);
         }

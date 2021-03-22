@@ -67,9 +67,8 @@ namespace FantomLib
         //Returns value when 'OK' pressed.
         private void ReceiveResult(string result)
         {
-            if (OnResult != null)
-                GameObject.Find("TimeResult").GetComponent<TMP_Text>().text = result;
-            //OnResult.Invoke(result);
+            string data = DateTime.Parse(result).ToString("HH:mm");
+            GameObject.Find("ResultadoDoTempo").GetComponent<TMP_Text>().text = result;
         }
     }
 }

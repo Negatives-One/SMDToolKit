@@ -8,23 +8,23 @@ using TMPro;
 namespace FantomLib
 {
     /// <summary>
-    /// DatePicker Dialog Controller
+    /// TimePicker Dialog Controller
     ///･Note: Callback from Android to Unity is received under 'GameObject.name'. That is, it is unique within the hierarchy. 
     /// (Datetime format)
     /// https://developer.android.com/reference/java/text/SimpleDateFormat.html
     /// (Theme[Style])
     /// https://developer.android.com/reference/android/R.style.html#Theme
     /// </summary>
-    public class DatePickerController : MonoBehaviour
+    public class TimePickerControllerInicio : MonoBehaviour
     {
         //Inspector Settings
-        public string defaultDate = "";                 //When it is empty, it is the current time.
-        public string resultDateFormat = "yyyy/M/d";    //Java Datetime format.
+        public string defaultTime = "";                 //When it is empty, it is the current time.
+        public string resultTimeFormat = "H:mm";        //Java Datetime format.
 
         public string style = "android:Theme.DeviceDefault.Light.Dialog.Alert"; //Dialog theme
 
         //Callbacks
-        [Serializable] public class ResultHandler : UnityEvent<string> { }      //date string
+        [Serializable] public class ResultHandler : UnityEvent<string> { }      //time string
         public ResultHandler OnResult;
 
 
@@ -39,7 +39,7 @@ namespace FantomLib
         //{
 
         //}
-        
+
         
         //Show dialog
         public void Show()
@@ -47,19 +47,19 @@ namespace FantomLib
 #if UNITY_EDITOR
             Debug.Log("DatePickerController.Show called");
 #elif UNITY_ANDROID
-            AndroidPlugin.ShowDatePickerDialog(
-                defaultDate,
-                resultDateFormat,
+            AndroidPlugin.ShowTimePickerDialog(
+                defaultTime,
+                resultTimeFormat,
                 gameObject.name,
                 "ReceiveResult",
                 style);
 #endif
         }
 
-        //Set date string dynamically and show dialog (current date string will be overwritten)
-        public void Show(string defaultDate)
+        //Set time string dynamically and show dialog (current time string will be overwritten)
+        public void Show(string defaultTime)
         {
-            this.defaultDate = defaultDate;
+            this.defaultTime = defaultTime;
             Show();
         }
 
@@ -67,12 +67,8 @@ namespace FantomLib
         //Returns value when 'OK' pressed.
         private void ReceiveResult(string result)
         {
-            if (OnResult != null)
-            {
-                string data = DateTime.Parse(result).ToString("dd/MM/yyyy");
-                GameObject.Find("ResultadoDaData").GetComponent<TMP_Text>().text = result;
-            }
-                //OnResult.Invoke(result);
+            string data = DateTime.Parse(result).ToString("HH:mm");
+            GameObject.Find("ResultadoDoTempoInicio").GetComponent<TMP_Text>().text = result;
         }
     }
 }
