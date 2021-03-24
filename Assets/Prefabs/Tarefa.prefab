@@ -34,10 +34,10 @@ RectTransform:
   m_Father: {fileID: 6453847380895721943}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -137.53697, y: 0}
-  m_SizeDelta: {x: 172.8188, y: 0}
+  m_AnchorMin: {x: 0.1896568, y: 0.0625}
+  m_AnchorMax: {x: 0.70000005, y: 1}
+  m_AnchoredPosition: {x: 0, y: -2.5}
+  m_SizeDelta: {x: 0, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6453847379944295840
 CanvasRenderer:
@@ -153,10 +153,10 @@ RectTransform:
   m_Father: {fileID: 6453847380895721943}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 242.17148, y: 0}
-  m_SizeDelta: {x: 268.457, y: 0}
+  m_AnchorMin: {x: 0.70000005, y: 0.0625}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: -21.6254}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6453847380249770563
 CanvasRenderer:
@@ -213,15 +213,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 39.15
+  m_fontSizeBase: 18.1
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 14
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
-  m_uvLineOffset: 0
+  m_uvLineOffset: 1
   m_geometrySortingOrder: 0
   m_IsTextObjectScaleStatic: 0
   m_VertexBufferAutoSizeReduction: 1
@@ -349,6 +349,7 @@ MonoBehaviour:
   index: 0
   nomeTarefa: {fileID: 0}
   timeReference: {fileID: 0}
+  manager: {fileID: 0}
 --- !u!1 &6453847380953315313
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,7 +433,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2847383037576884895}
+        m_TargetAssemblyTypeName: Tarefa, Assembly-CSharp
+        m_MethodName: Concluir
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &6453847381008182385
 GameObject:
@@ -619,8 +632,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 75.50256, y: 0}
-  m_SizeDelta: {x: 151.0051, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6453847381617284548
 CanvasRenderer:
@@ -685,7 +698,7 @@ MonoBehaviour:
   m_fontSizeMax: 36
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 4096
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0

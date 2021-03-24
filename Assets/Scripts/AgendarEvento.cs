@@ -6,16 +6,10 @@ using SimpleJSON;
 using System.IO;
 using System;
 using System.Globalization;
+using UnityEngine.UI;
 
 public class AgendarEvento : MonoBehaviour
 {
-    [SerializeField]
-    private TMP_Text dataLabel;
-    [SerializeField]
-    private TMP_Text timeLabel;
-    [SerializeField]
-    private TMP_InputField nameField;
-
     [SerializeField]
     Dictionary<int, object> dict;
 
@@ -36,61 +30,94 @@ public class AgendarEvento : MonoBehaviour
         GameManager.Instance.UpdateNotifications();
     }
 
+
+
     public void SaveEvent()
     {
-        if(File.Exists(Application.persistentDataPath + "/Eventos.json")){
-            if (nameField.text.Length > 0 && dataLabel.text != "Nenhuma Data Selecionada" && timeLabel.text != "Nenhum Horário Selecionado")
-            {
-                JSONObject eventJSON = new JSONObject();
-                eventJSON.Add("nome", nameField.text);
-                eventJSON.Add("data", dataLabel.text);
-                eventJSON.Add("hora", timeLabel.text);
-                int eventIndex = GameManager.Instance.NumeroEventos;
-                string path = Application.persistentDataPath + "/Eventos.json";
-                string jsonString = File.ReadAllText(path);
-                JSONObject file = (JSONObject)JSON.Parse(jsonString);
-                file.Add(eventIndex.ToString(), eventJSON);
-
-                //string path = Application.persistentDataPath + "/Eventos.json";
-                File.WriteAllText(path, file.ToString());
-                GameManager.Instance.UpdateCount();
-            }
+        if (File.Exists(Application.persistentDataPath + "/Eventos.json"))
+        {
+            SaveWithRead();
         }
         else
         {
-            if (nameField.text.Length > 0 && dataLabel.text != "Nenhuma Data Selecionada" && timeLabel.text != "Nenhum Horário Selecionado")
-            {
-                JSONObject eventJSON = new JSONObject();
-                eventJSON.Add("nome", nameField.text);
-                eventJSON.Add("data", dataLabel.text);
-                eventJSON.Add("hora", timeLabel.text);
-                JSONObject events = new JSONObject();
-                events.Add("0", eventJSON);
-
-                string path = Application.persistentDataPath + "/Eventos.json";
-                File.WriteAllText(path, events.ToString());
-                GameManager.Instance.UpdateCount();
-            }
+            SaveNoRead();
         }
-        DateTime dataHoraOk = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "data"), GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "hora"));
+
+        //DateTime dataHoraOk = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "data"), GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "hora"));
         //string dataHora = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
         //DateTime dataHoraOK = DateTime.ParseExact(dataHora, "yyyy/MM/dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
-        GameManager.Instance.Notify(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "nome"), string.Empty, dataHoraOk);
+        //GameManager.Instance.Notify(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "nome"), string.Empty, dataHoraOk);
     }
 
-    public void Teste()
+
+    private void SaveWithRead()
     {
-        dataLabel.text = DateTime.Now.ToString("yyyy/MM/dd");
-        timeLabel.text = DateTime.Now.ToString("HH:mm");
+        JSONObject eventJSON = new JSONObject();
+        eventJSON.Add("simples", true);
+        eventJSON.Add("nome", "Tarefa" + (GameManager.Instance.NumeroEventos + 1).ToString());
+        eventJSON.Add("dataInicial", DateTime.Today.ToString());
+        eventJSON.Add("horaInicial", "null");
+        eventJSON.Add("dataFinal", "null");
+        eventJSON.Add("horaFinal", "null");
+        eventJSON.Add("prioridade", "null");
+        eventJSON.Add("categoria", "null");
+        eventJSON.Add("descricao", "null");
+        eventJSON.Add("lembrete", "null");
+        eventJSON.Add("repeticao", "null");
+        eventJSON.Add("concluido", false);
+
+        int eventIndex = GameManager.Instance.NumeroEventos;
+        string path = Application.persistentDataPath + "/Eventos.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject file = (JSONObject)JSONObject.Parse(jsonString);
+        file.Add(eventIndex.ToString(), eventJSON);
+
+        File.WriteAllText(path, file.ToString());
+        GameManager.Instance.UpdateCount();
+    } 
+    private void SaveNoRead()
+    {
+        JSONObject eventJSON = new JSONObject();
+        eventJSON.Add("simples", true);
+        eventJSON.Add("nome", "Tarefa" + (GameManager.Instance.NumeroEventos + 1).ToString());
+        eventJSON.Add("dataInicial", DateTime.Today.ToString());
+        eventJSON.Add("horaInicial", "null");
+        eventJSON.Add("dataFinal", "null");
+        eventJSON.Add("horaFinal", "null");
+        eventJSON.Add("prioridade", "null");
+        eventJSON.Add("categoria", "null");
+        eventJSON.Add("descricao", "null");
+        eventJSON.Add("lembrete", "null");
+        eventJSON.Add("repeticao", "null");
+        eventJSON.Add("concluido", false);
+        //eventJSON.Add("simples", true);
+        //eventJSON.Add("nome", nameFieldU.text);
+        //eventJSON.Add("dataInicial", dataLabelU.text);
+        //eventJSON.Add("horaInicial", timeLabelU.text);
+        //eventJSON.Add("dataFinal", "null");
+        //eventJSON.Add("horaFinal", "null");
+        //eventJSON.Add("prioridade", "null");
+        //eventJSON.Add("categoria", "null");
+        //eventJSON.Add("descricao", "null");
+        //eventJSON.Add("lembrete", lembrete.isOn);
+        //eventJSON.Add("repeticao", lembrete.isOn);
+        //eventJSON.Add("concluido", false);
+
+        int eventIndex = GameManager.Instance.NumeroEventos;
+        string path = Application.persistentDataPath + "/Eventos.json";
+
+        JSONObject file = new JSONObject();
+        file.Add(eventIndex.ToString(), eventJSON);
+
+        //string path = Application.persistentDataPath + "/Eventos.json";
+        File.WriteAllText(path, file.ToString());
+        GameManager.Instance.UpdateCount();
+            //nameFieldU.Select();
+            //nameFieldU.text = string.Empty;        
     }
 
     public void DeleteSave()
     {
         GameManager.Instance.DeleteSave();
-    }
-
-    public void Notify()
-    {
-        GameManager.Instance.Notify("Oi","Tchau", DateTime.Now);
     }
 }

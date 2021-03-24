@@ -19,7 +19,7 @@ public class LoginScript : MonoBehaviour
     private TMP_Text passWarning;
     void Start()
     {
-
+        
     }
 
     public void CheckLogin()

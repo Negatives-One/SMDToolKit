@@ -22,7 +22,49 @@ public class Agenda : MonoBehaviour
     [SerializeField]
     private GameObject contentTarefa;
 
+
+    [SerializeField]
+    private GameObject taskPanel;
+    [SerializeField]
+    private Toggle taskToggle;
+    [SerializeField]
+    private TMP_InputField taskName;
+    [SerializeField]
+    private TMP_InputField taskDescription;
+
+    [SerializeField]
+    private GameObject prioridades;
+    [SerializeField]
+    private GameObject categorias;
+
+    private int actualTaskIndex;
+
     private string path;
+
+
+    [SerializeField]
+    private GameObject dataButton;
+    [SerializeField]
+    private GameObject duracaoButton;
+
+    [SerializeField]
+    private TMP_Text dataLabelU;
+    [SerializeField]
+    private TMP_Text timeLabelU;
+
+    [SerializeField]
+    private TMP_Text dataLabelMI;
+    [SerializeField]
+    private TMP_Text timeLabelMI;
+    [SerializeField]
+    private TMP_Text dataLabelMF;
+    [SerializeField]
+    private TMP_Text timeLabelMF;
+
+    [SerializeField]
+    private Toggle lembrete;
+    [SerializeField]
+    private Toggle repeticao;
 
     private void Start()
     {
@@ -42,76 +84,242 @@ public class Agenda : MonoBehaviour
 
     public void ShowTarefas()
     {
-        if(contentTarefa.transform.childCount > 0)
+        if (GameManager.Instance.NumeroEventos > 0)
         {
-            for(int i = 0; i < contentTarefa.transform.childCount; i++)
+
+            if (contentTarefa.transform.childCount > 0)
             {
-                Destroy(contentTarefa.transform.GetChild(i).gameObject);
+                for (int i = 0; i < contentTarefa.transform.childCount; i++)
+                {
+                    Destroy(contentTarefa.transform.GetChild(i).gameObject);
+                }
             }
-        }
-        List<int> aplicaveis = new List<int>();
-        switch (filterDropdown.value)
-        {
-            case 0://hoje
-                for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
-                {
-                    if(DateTime.Today == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "data")))
+            List<int> aplicaveis = new List<int>();
+            switch (filterDropdown.value)
+            {
+                case 0://hoje
+                    for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
                     {
-                        aplicaveis.Add(i);
+                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
+                        {
+                            if (DateTime.Today == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")))
+                            {
+                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                {
+                                    aplicaveis.Add(i);
+                                }
+                            }
+                        }
+                        else //multiplo
+                        {
+                            if(DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today)
+                            {
+                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                {
+                                    aplicaveis.Add(i);
+                                }
+                            }
+                        }
                     }
-                }
-                break;
-            case 1://amanhã
-                for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
-                {
-                    if (DateTime.Today.AddDays(1).Date == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "data")))
+                    break;
+                case 1://amanhã
+                    for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
                     {
-                        aplicaveis.Add(i);
+                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
+                        {
+                            if (DateTime.Today.AddDays(1).Date == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")))
+                            {
+                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                {
+                                    aplicaveis.Add(i);
+                                }
+                            }
+                        }
+                        else //multiplo
+                        {
+                            if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today.AddDays(1).Date && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today.AddDays(1).Date)
+                            {
+                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                {
+                                    aplicaveis.Add(i);
+                                }
+                            }
+                        }
                     }
-                }
-                break;
-            case 2://semana
-                for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
-                {
-                    DateTime jsonDate = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "data"));
-                    if ((DateTime.Today.AddDays(7).Date - jsonDate).Days < 0 || (DateTime.Today.AddDays(8).Date - jsonDate).Days > 7)
+                    break;
+                case 2://semana
+                    for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
                     {
-                        Debug.Log("Not This Week");
+                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
+                        {
+                            DateTime jsonDate = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial"));
+                            if (!((DateTime.Today.AddDays(7).Date - jsonDate).Days <= 0 || (DateTime.Today.AddDays(7).Date - jsonDate).Days > 7))
+                            {
+                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                {
+                                    aplicaveis.Add(i);
+                                }
+                            }
+                        }
+                        else //multiplo
+                        {
+                            DateTime StartParameter = DateTime.Today;
+                            DateTime EndParameter = DateTime.Today.AddDays(7).Date;
+
+                            DateTime JSONStart = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial"));
+                            DateTime JSONEnd = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal"));
+
+                            bool overlap = StartParameter < JSONEnd && JSONStart < EndParameter;
+                            if (overlap)
+                            {
+                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                {
+                                    aplicaveis.Add(i);
+                                }
+                            }
+                            //if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today.AddDays(1).Date && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today.AddDays(1).Date)
+                            //{
+                            //    aplicaveis.Add(i);
+                            //}
+                        }
+                    }
+                    break;
+                case 3://Entrada
+                    for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
+                    {
+                        if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                        {
+                            aplicaveis.Add(i);
+                        }
+                    }
+                    break;
+                case 4://Concluido
+                    for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
+                    {
+                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                        {
+                            aplicaveis.Add(i);
+                        }
+                    }
+                    break;
+                default:
+                    Debug.Log("Valor Incorreto");
+                    break;
+            }
+
+            for (int i = 0; i < aplicaveis.Count; i++)
+            {
+                GameObject tarefaInstance = Instantiate(tarefa, contentTarefa.transform.position, Quaternion.identity, contentTarefa.transform);
+
+                tarefaInstance.GetComponent<Tarefa>().manager = this;
+
+                tarefaInstance.GetComponent<Tarefa>().index = aplicaveis[i];
+                tarefaInstance.GetComponent<Tarefa>().nomeTarefa = tarefaInstance.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>();
+                tarefaInstance.GetComponent<Tarefa>().timeReference = tarefaInstance.transform.GetChild(2).gameObject.GetComponent<TMP_Text>();
+
+                tarefaInstance.GetComponent<Tarefa>().SetName(GameManager.Instance.LoadEventProperty(aplicaveis[i], "nome"));
+                if (filterDropdown.value == 0)
+                {
+                    if (bool.Parse(GameManager.Instance.LoadEventProperty(aplicaveis[i], "simples")))
+                    {
+                        tarefaInstance.GetComponent<Tarefa>().SetTimeReference(GameManager.Instance.LoadEventProperty(aplicaveis[i], "horaInicial"));
                     }
                     else
                     {
-                        aplicaveis.Add(i);
+                        string date = GameManager.Instance.LoadEventProperty(aplicaveis[i], "dataInicial") + " - " + GameManager.Instance.LoadEventProperty(aplicaveis[i], "dataFinal");
+                        tarefaInstance.GetComponent<Tarefa>().SetTimeReference(date);
                     }
                 }
-                break;
-            case 3://Entrada
-                for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
+                else
                 {
-                    aplicaveis.Add(i);
+                    if(bool.Parse(GameManager.Instance.LoadEventProperty(aplicaveis[i], "simples")))
+                    {
+                        //Debug.Log(GameManager.Instance.LoadEventProperty(aplicaveis[i], "dataInicial"));
+                        tarefaInstance.GetComponent<Tarefa>().SetTimeReference(GameManager.Instance.LoadEventProperty(aplicaveis[i], "dataInicial"));
+                    }
+                    else
+                    {
+                        string date = GameManager.Instance.LoadEventProperty(aplicaveis[i], "dataInicial") + " - " + GameManager.Instance.LoadEventProperty(aplicaveis[i], "dataFinal");
+                        tarefaInstance.GetComponent<Tarefa>().SetTimeReference(date);
+                    }
                 }
-                break;
-            default:
-                Debug.Log("Valor Incorreto");
-                break;
+            }
         }
+    }
 
-        for(int i = 0; i < aplicaveis.Count; i++)
+    public void OpenTaskPanel(int taskIndex)
+    {
+        actualTaskIndex = taskIndex;
+        taskToggle.isOn = bool.Parse(GameManager.Instance.LoadEventProperty(taskIndex, "concluido"));
+        taskName.text = GameManager.Instance.LoadEventProperty(taskIndex, "nome");
+        if(GameManager.Instance.LoadEventProperty(taskIndex, "descricao") != "null") 
         {
-            GameObject tarefaInstance = Instantiate(tarefa, contentTarefa.transform.position, Quaternion.identity, contentTarefa.transform);
+            taskDescription.text = GameManager.Instance.LoadEventProperty(taskIndex, "descricao");
+        }
+    }
 
-            tarefaInstance.GetComponent<Tarefa>().nomeTarefa = tarefaInstance.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.GetComponent<TMP_Text>();
-            tarefaInstance.GetComponent<Tarefa>().timeReference = tarefaInstance.transform.GetChild(2).gameObject.GetComponent<TMP_Text>();
+    public void SetTaskName()
+    {
+        JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+        evento["nome"] = taskName.text;
+        GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+    }
 
-            tarefaInstance.GetComponent<Tarefa>().SetName(GameManager.Instance.LoadEventProperty(aplicaveis[i], "nome"));
-            if(filterDropdown.value == 0)
+    public void SetDescription()
+    {
+        JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+        evento["descricao"] = taskDescription.text;
+        GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+    }
+
+    public void SetPriority(string type)
+    {
+        JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+        evento["prioridade"] = type;
+        GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+        prioridades.SetActive(false);
+    }
+
+    public void SetCategoria(string type)
+    {
+        JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+        evento["categoria"] = type;
+        GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+        categorias.SetActive(false);
+    }
+
+    public void DeleteTask()
+    {
+        GameManager.Instance.RemoveEvent(actualTaskIndex);
+
+    }
+
+    public void ShowDateTime()
+    {
+        if(GameManager.Instance.LoadEventProperty(actualTaskIndex, "simples") != "null")
+        {
+            if(bool.Parse(GameManager.Instance.LoadEventProperty(actualTaskIndex, "simples")))
             {
-                tarefaInstance.GetComponent<Tarefa>().SetTimeReference(GameManager.Instance.LoadEventProperty(aplicaveis[i], "hora"));
+                DataClick();
+                dataLabelU.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial");
+                timeLabelU.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial");
             }
             else
             {
-                tarefaInstance.GetComponent<Tarefa>().SetTimeReference(GameManager.Instance.LoadEventProperty(aplicaveis[i], "data"));
+                DuracaoClick();
+                dataLabelMI.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial");
+                timeLabelMI.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial");
+                dataLabelMF.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal");
+                timeLabelMF.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal");
             }
         }
+    }
+
+    public void ShowTask(int index)
+    {
+        actualTaskIndex = index;
+        taskPanel.SetActive(true);
+        OpenTaskPanel(actualTaskIndex);
     }
 
     public void DataClick()

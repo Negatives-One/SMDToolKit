@@ -83,7 +83,8 @@ public class GameManager : MonoBehaviour
         {
             string path = Application.persistentDataPath + "/Eventos.json";
             string jsonString = File.ReadAllText(path);
-            JSONObject events = (JSONObject)JSON.Parse(jsonString);
+            JSONObject events = (JSONObject)JSONObject.Parse(jsonString);
+
             NumeroEventos = events.Count;
         }
     }
@@ -133,7 +134,8 @@ public class GameManager : MonoBehaviour
         string jsonString = File.ReadAllText(path);
         JSONObject events = (JSONObject)JSON.Parse(jsonString);
         events.Add(eventIndex.ToString(), createdEvent);
-        UpdateNotifications();
+        File.WriteAllText(path, events.ToString());
+        //UpdateNotifications();
     }
 
     public void RemoveEvent(int eventIndex)
@@ -159,8 +161,8 @@ public class GameManager : MonoBehaviour
                 }
             }
             File.WriteAllText(path, newEvents.ToString());
-            UpdateCount();
-            UpdateNotifications();
+            //UpdateCount();
+            //UpdateNotifications();
         }
     }
 
