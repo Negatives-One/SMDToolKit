@@ -77,11 +77,6 @@ public class Agenda : MonoBehaviour
         
     }
 
-    public void CreateEvent()
-    {
-
-    }
-
     public void ShowTarefas()
     {
         if (GameManager.Instance.NumeroEventos > 0)
@@ -312,6 +307,18 @@ public class Agenda : MonoBehaviour
                 dataLabelMF.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal");
                 timeLabelMF.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal");
             }
+        }
+    }
+
+    public void UpdateDateTime()
+    {
+        if(dataButton.transform.GetChild(1).gameObject.activeSelf == true)
+        {
+            JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+            evento["simples"] = true;
+            evento["dataInicial"] = dataLabelU.text;
+            evento["horaInicial"] = timeLabelU.text;
+            GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
         }
     }
 

@@ -42,23 +42,22 @@ public class AgendarEvento : MonoBehaviour
         {
             SaveNoRead();
         }
-
+        GameManager.Instance.UpdateCount();
         //DateTime dataHoraOk = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "data"), GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "hora"));
         //string dataHora = GameManager.Instance.LoadEventProperty(0, "data") + " " + GameManager.Instance.LoadEventProperty(0, "hora");
         //DateTime dataHoraOK = DateTime.ParseExact(dataHora, "yyyy/MM/dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
         //GameManager.Instance.Notify(GameManager.Instance.LoadEventProperty(GameManager.Instance.NumeroEventos - 1, "nome"), string.Empty, dataHoraOk);
     }
 
-
     private void SaveWithRead()
     {
         JSONObject eventJSON = new JSONObject();
         eventJSON.Add("simples", true);
         eventJSON.Add("nome", "Tarefa" + (GameManager.Instance.NumeroEventos + 1).ToString());
-        eventJSON.Add("dataInicial", DateTime.Today.ToString());
-        eventJSON.Add("horaInicial", "null");
-        eventJSON.Add("dataFinal", "null");
-        eventJSON.Add("horaFinal", "null");
+        eventJSON.Add("dataInicial", DateTime.Today.ToString("yyyy/MM/dd"));
+        eventJSON.Add("horaInicial", DateTime.Today.ToString("HH:mm"));
+        eventJSON.Add("dataFinal", DateTime.Today.ToString("yyyy/MM/dd"));
+        eventJSON.Add("horaFinal", DateTime.Today.ToString("HH:mm"));
         eventJSON.Add("prioridade", "null");
         eventJSON.Add("categoria", "null");
         eventJSON.Add("descricao", "null");
@@ -73,17 +72,16 @@ public class AgendarEvento : MonoBehaviour
         file.Add(eventIndex.ToString(), eventJSON);
 
         File.WriteAllText(path, file.ToString());
-        GameManager.Instance.UpdateCount();
     } 
     private void SaveNoRead()
     {
         JSONObject eventJSON = new JSONObject();
         eventJSON.Add("simples", true);
         eventJSON.Add("nome", "Tarefa" + (GameManager.Instance.NumeroEventos + 1).ToString());
-        eventJSON.Add("dataInicial", DateTime.Today.ToString());
-        eventJSON.Add("horaInicial", "null");
-        eventJSON.Add("dataFinal", "null");
-        eventJSON.Add("horaFinal", "null");
+        eventJSON.Add("dataInicial", DateTime.Today.ToString("yyyy/MM/dd"));
+        eventJSON.Add("horaInicial", DateTime.Today.ToString("HH:mm"));
+        eventJSON.Add("dataFinal", DateTime.Today.ToString("yyyy/MM/dd"));
+        eventJSON.Add("horaFinal", DateTime.Today.ToString("HH:mm"));
         eventJSON.Add("prioridade", "null");
         eventJSON.Add("categoria", "null");
         eventJSON.Add("descricao", "null");
@@ -111,7 +109,6 @@ public class AgendarEvento : MonoBehaviour
 
         //string path = Application.persistentDataPath + "/Eventos.json";
         File.WriteAllText(path, file.ToString());
-        GameManager.Instance.UpdateCount();
             //nameFieldU.Select();
             //nameFieldU.text = string.Empty;        
     }
