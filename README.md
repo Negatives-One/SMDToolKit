@@ -5,6 +5,11 @@ Equipe Chico Chicken: João Lucas Oliveira de Sousa, Raimundo Thales Ferreira Ay
 ## Descrição
  
 SMD Toolkit é um aplicativo que vai ajudar os estudantes do curso de Sistemas e Mídias Digitais a se organizar melhor para as atividades da faculdade.
+
+
+## Instrução
+
+O aplicativo irá pedir seu nome de usuário e senha, o nome de usuário pode ser qualquer entrada, mas a senha é "admin".
  
  
 ## Tecnologia 
