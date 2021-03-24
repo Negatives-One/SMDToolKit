@@ -318,6 +318,20 @@ public class Agenda : MonoBehaviour
             evento["simples"] = true;
             evento["dataInicial"] = dataLabelU.text;
             evento["horaInicial"] = timeLabelU.text;
+            evento["lembrete"] = lembrete.isOn;
+            evento["repeticao"] = repeticao.isOn;
+            GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+        }
+        else if(duracaoButton.transform.GetChild(1).gameObject.activeSelf == true)
+        {
+            JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+            evento["simples"] = false;
+            evento["dataInicial"] = dataLabelMI.text;
+            evento["horaInicial"] = timeLabelMI.text;
+            evento["dataFinal"] = dataLabelMF.text;
+            evento["horaFinal"] = timeLabelMF.text;
+            evento["lembrete"] = lembrete.isOn;
+            evento["repeticao"] = false;
             GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
         }
     }

@@ -37,7 +37,7 @@ public class Main : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        hiUser.text = "Hi, " + GameManager.Instance.username;
+        hiUser.text = "Olá, " + GameManager.Instance.username;
     }
 
     // Update is called once per frame
@@ -61,25 +61,6 @@ public class Main : MonoBehaviour
     //        legendas.SetActive(false);
     //    }
     //}
-
-    private void InteractObjects()
-    {
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            Vector3 position = new Vector3(touch.position.x, touch.position.y, Camera.main.transform.position.z);
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(position);
-
-            if (Physics.Raycast(ray, out hit, 100f))
-            {
-                if (hit.transform != null)
-                {
-                    Debug.Log(hit.transform.gameObject.name);
-                }
-            }
-        }
-    }
 
 
     public void ShowLegenda()
