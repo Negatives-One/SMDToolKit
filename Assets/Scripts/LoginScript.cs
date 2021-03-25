@@ -17,9 +17,11 @@ public class LoginScript : MonoBehaviour
     private TMP_Text userWarning;
     [SerializeField]
     private TMP_Text passWarning;
+
+    [SerializeField]
+    private GameObject splash;
     void Start()
     {
-        
     }
 
     public void CheckLogin()
