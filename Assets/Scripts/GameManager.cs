@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviour
                 }
             }
             File.WriteAllText(path, newEvents.ToString());
-            //UpdateCount();
+            UpdateCount();
             //UpdateNotifications();
         }
     }
@@ -190,6 +190,17 @@ public class GameManager : MonoBehaviour
             AndroidNotificationCenter.CancelAllNotifications();
             AndroidNotificationCenter.SendNotification(notification, "channel_id");
         }
+    }
+
+    public void MultipleNotify(string text, DateTime InitialDateTime, DateTime FinalDateTime )
+    {
+        DateTime currentIteration = InitialDateTime;
+        while(currentIteration.Date != FinalDateTime.Date)
+        {
+            Notify("SMD Toolkit", text, currentIteration);
+            currentIteration.AddDays(1);
+        }
+        Notify("SMD Toolkit", "Fim do Evento: " + text, FinalDateTime);
     }
 
     public void UpdateNotifications()

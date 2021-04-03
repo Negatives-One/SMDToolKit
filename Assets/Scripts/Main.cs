@@ -112,20 +112,6 @@ public class Main : MonoBehaviour
         }
     }
 
-    public void GearButton()
-    {
-        if (config.activeSelf)
-        {
-            config.SetActive(false);
-            gear.GetComponent<Image>().sprite = gearB;//.color = Color.white;//(255f, 255f, 255f);
-        }
-        else
-        {
-            config.SetActive(true);
-            gear.GetComponent<Image>().sprite = gearL;//.color = Color.cyan;// (219f, 125f, 71f);
-        }
-    }
-
     public void Quit()
     {
         Application.Quit();

@@ -26,7 +26,7 @@ public class Agenda : MonoBehaviour
     [SerializeField]
     private GameObject taskPanel;
     [SerializeField]
-    private Toggle taskToggle;
+    private GameObject taskToggle;
     [SerializeField]
     private TMP_InputField taskName;
     [SerializeField]
@@ -38,6 +38,8 @@ public class Agenda : MonoBehaviour
     private GameObject categorias;
 
     private int actualTaskIndex;
+
+    private GameObject taskPrefab;
 
     private string path;
 
@@ -95,23 +97,26 @@ public class Agenda : MonoBehaviour
                 case 0://hoje
                     for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
                     {
-                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
+                        if (GameManager.Instance.LoadEventProperty(i, "dataInicial") != string.Empty)
                         {
-                            if (DateTime.Today == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")))
+                            if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
                             {
-                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                if (DateTime.Today == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")))
                                 {
-                                    aplicaveis.Add(i);
+                                    if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                    {
+                                        aplicaveis.Add(i);
+                                    }
                                 }
                             }
-                        }
-                        else //multiplo
-                        {
-                            if(DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today)
+                            else //multiplo
                             {
-                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today)
                                 {
-                                    aplicaveis.Add(i);
+                                    if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                    {
+                                        aplicaveis.Add(i);
+                                    }
                                 }
                             }
                         }
@@ -120,23 +125,26 @@ public class Agenda : MonoBehaviour
                 case 1://amanhã
                     for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
                     {
-                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
+                        if (GameManager.Instance.LoadEventProperty(i, "dataInicial") != string.Empty)
                         {
-                            if (DateTime.Today.AddDays(1).Date == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")))
+                            if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
                             {
-                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                if (DateTime.Today.AddDays(1).Date == DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")))
                                 {
-                                    aplicaveis.Add(i);
+                                    if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                    {
+                                        aplicaveis.Add(i);
+                                    }
                                 }
                             }
-                        }
-                        else //multiplo
-                        {
-                            if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today.AddDays(1).Date && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today.AddDays(1).Date)
+                            else //multiplo
                             {
-                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today.AddDays(1).Date && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today.AddDays(1).Date)
                                 {
-                                    aplicaveis.Add(i);
+                                    if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                    {
+                                        aplicaveis.Add(i);
+                                    }
                                 }
                             }
                         }
@@ -145,37 +153,40 @@ public class Agenda : MonoBehaviour
                 case 2://semana
                     for (int i = 0; i < GameManager.Instance.NumeroEventos; i++)
                     {
-                        if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
+                        if (GameManager.Instance.LoadEventProperty(i, "dataInicial") != string.Empty)
                         {
-                            DateTime jsonDate = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial"));
-                            if (!((DateTime.Today.AddDays(7).Date - jsonDate).Days <= 0 || (DateTime.Today.AddDays(7).Date - jsonDate).Days > 7))
+                            if (bool.Parse(GameManager.Instance.LoadEventProperty(i, "simples")))
                             {
-                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                DateTime jsonDate = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial"));
+                                if (!((DateTime.Today.AddDays(7).Date - jsonDate).Days <= 0 || (DateTime.Today.AddDays(7).Date - jsonDate).Days > 7))
                                 {
-                                    aplicaveis.Add(i);
+                                    if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                    {
+                                        aplicaveis.Add(i);
+                                    }
                                 }
                             }
-                        }
-                        else //multiplo
-                        {
-                            DateTime StartParameter = DateTime.Today;
-                            DateTime EndParameter = DateTime.Today.AddDays(7).Date;
-
-                            DateTime JSONStart = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial"));
-                            DateTime JSONEnd = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal"));
-
-                            bool overlap = StartParameter < JSONEnd && JSONStart < EndParameter;
-                            if (overlap)
+                            else //multiplo
                             {
-                                if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                DateTime StartParameter = DateTime.Today;
+                                DateTime EndParameter = DateTime.Today.AddDays(7).Date;
+
+                                DateTime JSONStart = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial"));
+                                DateTime JSONEnd = DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal"));
+
+                                bool overlap = StartParameter < JSONEnd && JSONStart < EndParameter;
+                                if (overlap)
                                 {
-                                    aplicaveis.Add(i);
+                                    if (!bool.Parse(GameManager.Instance.LoadEventProperty(i, "concluido")))
+                                    {
+                                        aplicaveis.Add(i);
+                                    }
                                 }
+                                //if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today.AddDays(1).Date && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today.AddDays(1).Date)
+                                //{
+                                //    aplicaveis.Add(i);
+                                //}
                             }
-                            //if (DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataInicial")) <= DateTime.Today.AddDays(1).Date && DateTime.Parse(GameManager.Instance.LoadEventProperty(i, "dataFinal")) >= DateTime.Today.AddDays(1).Date)
-                            //{
-                            //    aplicaveis.Add(i);
-                            //}
                         }
                     }
                     break;
@@ -245,12 +256,18 @@ public class Agenda : MonoBehaviour
     public void OpenTaskPanel(int taskIndex)
     {
         actualTaskIndex = taskIndex;
-        taskToggle.isOn = bool.Parse(GameManager.Instance.LoadEventProperty(taskIndex, "concluido"));
+        taskToggle.transform.GetChild(0).gameObject.SetActive(bool.Parse(GameManager.Instance.LoadEventProperty(taskIndex, "concluido")));
         taskName.text = GameManager.Instance.LoadEventProperty(taskIndex, "nome");
-        if(GameManager.Instance.LoadEventProperty(taskIndex, "descricao") != "null") 
+        if(GameManager.Instance.LoadEventProperty(taskIndex, "descricao") != string.Empty) 
         {
             taskDescription.text = GameManager.Instance.LoadEventProperty(taskIndex, "descricao");
         }
+    }
+
+    public void CreateTaskPanel()
+    {
+        taskToggle.transform.GetChild(0).gameObject.SetActive(false);
+        taskName.text = "Tarefa" + GameManager.Instance.NumeroEventos;
     }
 
     public void SetTaskName()
@@ -312,7 +329,7 @@ public class Agenda : MonoBehaviour
 
     public void UpdateDateTime()
     {
-        if(dataButton.transform.GetChild(1).gameObject.activeSelf == true)
+        if(dataButton.transform.GetChild(1).gameObject.activeSelf == true) //simples, apenas 1 notificação na hora inicial
         {
             JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
             evento["simples"] = true;
@@ -321,8 +338,15 @@ public class Agenda : MonoBehaviour
             evento["lembrete"] = lembrete.isOn;
             evento["repeticao"] = repeticao.isOn;
             GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+
+            if (lembrete.isOn)
+            {
+                DateTime dataHoraOk = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
+
+                GameManager.Instance.Notify("SMD Toolkit", GameManager.Instance.LoadEventProperty(actualTaskIndex, "nome"), dataHoraOk);
+            }
         }
-        else if(duracaoButton.transform.GetChild(1).gameObject.activeSelf == true)
+        else if(duracaoButton.transform.GetChild(1).gameObject.activeSelf == true) //não simples, notificação todo dia na hora inicial
         {
             JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
             evento["simples"] = false;
@@ -333,14 +357,28 @@ public class Agenda : MonoBehaviour
             evento["lembrete"] = lembrete.isOn;
             evento["repeticao"] = false;
             GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+
+            if (lembrete.isOn)
+            {
+                DateTime initialDate = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
+                DateTime finalDate = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal"));
+                GameManager.Instance.MultipleNotify(GameManager.Instance.LoadEventProperty(actualTaskIndex, "nome"), initialDate, finalDate);
+            }
         }
     }
 
-    public void ShowTask(int index)
+    public void ShowTask(int index, GameObject prefab)
     {
         actualTaskIndex = index;
+        taskPrefab = prefab;
         taskPanel.SetActive(true);
         OpenTaskPanel(actualTaskIndex);
+    }
+
+    public void CompleteTaskDetailed()
+    {
+        taskPrefab.GetComponent<Tarefa>().SetConcluido();
+        taskToggle.transform.GetChild(0).gameObject.SetActive(bool.Parse(GameManager.Instance.LoadEventProperty(actualTaskIndex, "concluido")));
     }
 
     public void DataClick()

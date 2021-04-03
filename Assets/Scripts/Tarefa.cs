@@ -17,12 +17,13 @@ public class Tarefa : MonoBehaviour
 
     void Start()
     {
-        if(bool.Parse(GameManager.Instance.LoadEventProperty(index, "concluido")))
+        transform.GetChild(0).GetChild(0).gameObject.SetActive(bool.Parse(GameManager.Instance.LoadEventProperty(index, "concluido")));
+        if (bool.Parse(GameManager.Instance.LoadEventProperty(index, "concluido")))
         {
             nomeTarefa.fontStyle = FontStyles.Strikethrough;
-            transform.GetChild(0).gameObject.GetComponent<Toggle>().isOn = bool.Parse(GameManager.Instance.LoadEventProperty(index, "concluido"));
         }
         transform.GetChild(1).gameObject.GetComponent<Button>().onClick.AddListener(OpenTask);
+        transform.GetChild(0).gameObject.GetComponent<Button>().onClick.AddListener(SetConcluido);
     }
 
     public void SetName(string str)
@@ -35,16 +36,25 @@ public class Tarefa : MonoBehaviour
         timeReference.text = str;
     }
 
-    public void Concluir()
-    {
-        JSONObject evento = GameManager.Instance.LoadEvent(index);
-        evento["concluido"] = !bool.Parse(evento["concluido"]);
-        GameManager.Instance.UpdateEvent(index, evento);
-        manager.ShowTarefas();
-    }
+    //public void Concluir()
+    //{
+    //    JSONObject evento = GameManager.Instance.LoadEvent(index);
+    //    evento["concluido"] = !bool.Parse(evento["concluido"]);
+    //    GameManager.Instance.UpdateEvent(index, evento);
+    //    manager.ShowTarefas();
+    //}
 
     public void OpenTask()
     {
-        manager.ShowTask(index);
+        manager.ShowTask(index, gameObject);
+    }
+
+    public void SetConcluido()
+    {
+        transform.GetChild(0).GetChild(0).gameObject.SetActive(!transform.GetChild(0).GetChild(0).gameObject.activeSelf);
+        JSONObject evento = GameManager.Instance.LoadEvent(index);
+        evento["concluido"] = transform.GetChild(0).GetChild(0).gameObject.activeSelf;//set toggle button
+        GameManager.Instance.UpdateEvent(index, evento);
+        manager.ShowTarefas();
     }
 }

@@ -50,7 +50,7 @@ public class CustomizacaoQuarto : MonoBehaviour
         }
         cards.Clear();
         GameObject content = transform.GetChild(0).gameObject;
-        TMP_Dropdown dropdown = content.transform.GetChild(2).gameObject.GetComponent<TMP_Dropdown>();
+        TMP_Dropdown dropdown = content.transform.GetChild(1).gameObject.GetComponent<TMP_Dropdown>();
         switch (dropdown.value)
         {
             case 0:
