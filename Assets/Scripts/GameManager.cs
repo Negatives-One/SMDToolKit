@@ -166,6 +166,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void DuplicateEvent(int eventIndex)
+    {
+        JSONObject targetEvent = LoadEvent(eventIndex);
+        targetEvent["nome"] = targetEvent["nome"] + " (Cópia)";
+        string path = Application.persistentDataPath + "/Eventos.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject file = (JSONObject)JSONObject.Parse(jsonString);
+        file.Add(NumeroEventos.ToString(), targetEvent);
+
+        File.WriteAllText(path, file.ToString());
+        UpdateCount();
+    }
+
     public void Notify(string title, string text, DateTime date)
     {
         AndroidNotificationCenter.CancelAllDisplayedNotifications();
@@ -194,11 +207,12 @@ public class GameManager : MonoBehaviour
 
     public void MultipleNotify(string text, DateTime InitialDateTime, DateTime FinalDateTime )
     {
-        DateTime currentIteration = InitialDateTime;
-        while(currentIteration.Date != FinalDateTime.Date)
+        DateTime reference = InitialDateTime;
+        int diferencaDias = (int) (FinalDateTime - InitialDateTime).TotalDays;
+        for(int i = 0; i < diferencaDias; i++)
         {
-            Notify("SMD Toolkit", text, currentIteration);
-            currentIteration.AddDays(1);
+            Notify("SMD Toolkit", text, reference);
+            reference.AddDays(1);
         }
         Notify("SMD Toolkit", "Fim do Evento: " + text, FinalDateTime);
     }
@@ -206,13 +220,23 @@ public class GameManager : MonoBehaviour
     public void UpdateNotifications()
     {
         AndroidNotificationCenter.CancelAllNotifications();
+        UpdateCount();
         for(int i = 0; i < NumeroEventos; i++)
         {
             JSONObject evento = LoadEvent(i);
-            DateTime myDate = stringToDateTime(evento["data"], evento["hora"]);// DateTime.ParseExact(evento["data"], "yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture);
-            if(!HasPassed(myDate, DateTime.Now))
+            bool isSimple = bool.Parse(evento["simples"]);
+            DateTime data = StringToDateTime(evento["dataInicial"], evento["horaInicial"]);
+            if (!HasPassed(data, DateTime.Now))
             {
-                Notify(evento["nome"], string.Empty, myDate);
+                if (isSimple)
+                {
+                    Notify("SMD Toolkit", evento["nome"], data);
+                }
+                else
+                {
+                    DateTime final = StringToDateTime(evento["dataFinal"], evento["horaFinal"]);
+                    MultipleNotify("SMD Toolkit", data, final);
+                }
             }
         }
     }
@@ -228,7 +252,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public DateTime stringToDateTime(string data, string hora)
+    public DateTime StringToDateTime(string data, string hora)
     {
         string datinha = data.ToString() + " " + hora.ToString();
         DateTime myDate = DateTime.Parse(datinha.ToString(), System.Globalization.CultureInfo.InvariantCulture);

@@ -43,6 +43,14 @@ public class Agenda : MonoBehaviour
 
     private string path;
 
+    [SerializeField]
+    private TMP_Text prioridadeButtonText;
+    [SerializeField]
+    private Image prioridadeButtonImage;
+    [SerializeField]
+    private TMP_Text categoriaButtonText;
+    [SerializeField]
+    private TMP_Text dataTaskText;
 
     [SerializeField]
     private GameObject dataButton;
@@ -255,6 +263,7 @@ public class Agenda : MonoBehaviour
 
     public void OpenTaskPanel(int taskIndex)
     {
+        ResetTaskPanel();
         actualTaskIndex = taskIndex;
         taskToggle.transform.GetChild(0).gameObject.SetActive(bool.Parse(GameManager.Instance.LoadEventProperty(taskIndex, "concluido")));
         taskName.text = GameManager.Instance.LoadEventProperty(taskIndex, "nome");
@@ -262,6 +271,44 @@ public class Agenda : MonoBehaviour
         {
             taskDescription.text = GameManager.Instance.LoadEventProperty(taskIndex, "descricao");
         }
+        if(GameManager.Instance.LoadEventProperty(taskIndex, "prioridade") != string.Empty)
+        {
+            SetPriority(GameManager.Instance.LoadEventProperty(taskIndex, "prioridade"));
+        }
+        if(GameManager.Instance.LoadEventProperty(taskIndex, "categoria") != string.Empty)
+        {
+            SetCategoria(GameManager.Instance.LoadEventProperty(taskIndex, "categoria"));
+        }
+
+        if(bool.Parse(GameManager.Instance.LoadEventProperty(taskIndex, "simples")))
+        {
+            if(GameManager.Instance.LoadEventProperty(taskIndex, "dataInicial") != string.Empty)
+            {
+                dataTaskText.text = GameManager.Instance.LoadEventProperty(taskIndex, "dataInicial");
+            }
+        }
+        else
+        {
+            if (GameManager.Instance.LoadEventProperty(taskIndex, "dataFinal") != string.Empty)
+            {
+                dataTaskText.text = GameManager.Instance.LoadEventProperty(taskIndex, "dataInicial") + "\n" + GameManager.Instance.LoadEventProperty(taskIndex, "dataFinal");
+            }
+        }
+    }
+
+    private void ResetTaskPanel()
+    {
+        taskToggle.transform.GetChild(0).gameObject.SetActive(false);
+        taskName.text = "Tarefa";
+        taskDescription.text = string.Empty;
+        //Prioridade Reset
+        prioridadeButtonText.text = "Prioridade";
+        prioridadeButtonText.color = Color.red;
+        prioridadeButtonImage.color = Color.red;
+        //Categoria Reset
+        categoriaButtonText.text = "Categoria";
+        //Data Reset
+        dataTaskText.text = "Data";
     }
 
     public void CreateTaskPanel()
@@ -289,6 +336,22 @@ public class Agenda : MonoBehaviour
         JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
         evento["prioridade"] = type;
         GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+        prioridadeButtonText.text = type;
+        if(type == "Alta")
+        {
+            prioridadeButtonText.color = Color.red;
+            prioridadeButtonImage.color = Color.red;
+        }
+        else if (type == "Média")
+        {
+            prioridadeButtonText.color = Color.yellow;
+            prioridadeButtonImage.color = Color.yellow;
+        }
+        else
+        {
+            prioridadeButtonText.color = Color.green;
+            prioridadeButtonImage.color = Color.green;
+        }
         prioridades.SetActive(false);
     }
 
@@ -297,6 +360,7 @@ public class Agenda : MonoBehaviour
         JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
         evento["categoria"] = type;
         GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+        categoriaButtonText.text = type;
         categorias.SetActive(false);
     }
 
@@ -341,10 +405,11 @@ public class Agenda : MonoBehaviour
 
             if (lembrete.isOn)
             {
-                DateTime dataHoraOk = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
+                DateTime dataHoraOk = GameManager.Instance.StringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
 
                 GameManager.Instance.Notify("SMD Toolkit", GameManager.Instance.LoadEventProperty(actualTaskIndex, "nome"), dataHoraOk);
             }
+            dataTaskText.text = dataLabelU.text;
         }
         else if(duracaoButton.transform.GetChild(1).gameObject.activeSelf == true) //não simples, notificação todo dia na hora inicial
         {
@@ -360,8 +425,8 @@ public class Agenda : MonoBehaviour
 
             if (lembrete.isOn)
             {
-                DateTime initialDate = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
-                DateTime finalDate = GameManager.Instance.stringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal"));
+                DateTime initialDate = GameManager.Instance.StringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
+                DateTime finalDate = GameManager.Instance.StringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal"));
                 GameManager.Instance.MultipleNotify(GameManager.Instance.LoadEventProperty(actualTaskIndex, "nome"), initialDate, finalDate);
             }
         }
@@ -396,5 +461,11 @@ public class Agenda : MonoBehaviour
         DataButton.transform.GetChild(1).gameObject.SetActive(false);
         DuracaoButton.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().color = color;
         DuracaoButton.transform.GetChild(1).gameObject.SetActive(true);
+    }
+
+
+    public void DuplicarEvento()
+    {
+        GameManager.Instance.DuplicateEvent(actualTaskIndex);
     }
 }
