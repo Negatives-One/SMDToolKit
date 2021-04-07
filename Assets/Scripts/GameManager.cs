@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviour
             DesenhoI.Add("creditos", "4");
             DesenhoI.Add("necessario", "Desenho 2, Animações 2D, Concepções de Cenários e Personagens.");
             DesenhoI.Add("ativo", true);
+            DesenhoI.Add("oculto", false);
 
             file.Add("0", DesenhoI);
             
@@ -84,6 +85,7 @@ public class GameManager : MonoBehaviour
             ProgI.Add("creditos", string.Empty);
             ProgI.Add("necessario", string.Empty);
             ProgI.Add("ativo", false);
+            ProgI.Add("oculto", false);
 
             file.Add("1", ProgI);
             
@@ -95,6 +97,7 @@ public class GameManager : MonoBehaviour
             AutoI.Add("creditos", string.Empty);
             AutoI.Add("necessario", string.Empty);
             AutoI.Add("ativo", false);
+            AutoI.Add("oculto", false);
 
             file.Add("2", AutoI);
             
@@ -106,6 +109,7 @@ public class GameManager : MonoBehaviour
             Hist.Add("creditos", string.Empty);
             Hist.Add("necessario", string.Empty);
             Hist.Add("ativo", false);
+            Hist.Add("oculto", false);
 
             file.Add("3", Hist);
             
@@ -117,6 +121,7 @@ public class GameManager : MonoBehaviour
             Intr.Add("creditos", string.Empty);
             Intr.Add("necessario", string.Empty);
             Intr.Add("ativo", false);
+            Intr.Add("oculto", false);
 
             file.Add("4", Intr);
 
@@ -300,7 +305,8 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     DateTime final = StringToDateTime(evento["dataFinal"], evento["horaFinal"]);
-                    MultipleNotify("SMD Toolkit", data, final);
+                    Notify("SMD Toolkit", evento["nome"], data);
+                    Notify("SMD Toolkit", "Final do evento: " + evento["nome"], final);
                 }
             }
         }
@@ -334,11 +340,33 @@ public class GameManager : MonoBehaviour
 
     public string LoadDisciplineProperty(int eventIndex, string property)
     {
-        string eventIndexStr = eventIndex.ToString();
         string path = Application.persistentDataPath + "/Disciplinas.json";
         string jsonString = File.ReadAllText(path);
         JSONObject disciplines = (JSONObject)JSON.Parse(jsonString);
         JSONObject discipline = (JSONObject)JSON.Parse(disciplines[eventIndex].ToString());
         return discipline[property];
+    }
+
+    public JSONObject LoadDiscipline(int eventIndex)
+    {
+        string path = Application.persistentDataPath + "/Disciplinas.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject disciplines = (JSONObject)JSON.Parse(jsonString);
+        JSONObject discipline = (JSONObject)JSON.Parse(disciplines[eventIndex].ToString());
+        return discipline;
+    }
+
+    public void UpdateDiscipline(int index, string key, bool value)
+    {
+        string path = Application.persistentDataPath + "/Disciplinas.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject disciplinas = (JSONObject)JSON.Parse(jsonString);
+
+        JSONObject newDiscipline = LoadDiscipline(index);
+
+        newDiscipline[key] = value;
+
+        disciplinas.Add(index.ToString(), newDiscipline);
+        File.WriteAllText(path, disciplinas.ToString());
     }
 }

@@ -79,6 +79,8 @@ public class Agenda : MonoBehaviour
     [SerializeField]
     private GameObject avisoPrefab;
 
+    public GameObject botaoDisciplinaCategoria;
+
     private void Start()
     {
         path = Application.persistentDataPath + "/Eventos.json";
@@ -489,4 +491,24 @@ public class Agenda : MonoBehaviour
     {
         GameManager.Instance.DuplicateEvent(actualTaskIndex);
     }
+
+    public void CategoriaButton()
+    {
+        for (int i = 0; i < categorias.transform.childCount; i++)
+        {
+            Destroy(categorias.transform.GetChild(i).gameObject);
+        }
+        string path = Application.persistentDataPath + "/Disciplinas.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject disciplinas = (JSONObject)JSON.Parse(jsonString);
+        int NumeroDisciplinas = disciplinas.Count;
+        for(int i = 0; i < NumeroDisciplinas; i++)
+        {
+            GameObject botao = Instantiate(botaoDisciplinaCategoria, categorias.transform.position, Quaternion.identity, categorias.transform);
+            botao.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = GameManager.Instance.LoadDisciplineProperty(i, "nome");
+            string nome = GameManager.Instance.LoadDisciplineProperty(i, "nome");
+            botao.GetComponent<Button>().onClick.AddListener(delegate { SetCategoria(nome); });
+        }
+    }
+
 }
