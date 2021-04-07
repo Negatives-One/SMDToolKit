@@ -139,6 +139,19 @@ public class Disciplina : MonoBehaviour
         {
             GameManager.Instance.UpdateDiscipline(4, "oculto", oculto);
         }
+        if (!oculto)
+        {
+            transform.GetChild(4).GetChild(1).gameObject.GetComponent<Image>().sprite = ocultar;
+            transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().color = new Color32(219, 125, 71, 255);
+            transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().text = "Ocultar";
+        }
+        else
+        {
+            transform.GetChild(4).GetChild(1).gameObject.GetComponent<Image>().sprite = exibir;
+            transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().color = new Color32(152, 128, 215, 255);
+            transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().text = "Exibir";
+        }
+        transform.GetChild(4).GetChild(1).gameObject.GetComponent<Image>().SetNativeSize();
     }
 
     public void clickDiscipline()
@@ -152,15 +165,17 @@ public class Disciplina : MonoBehaviour
     public void VisibilityButton()
     {
         SetOculto(!oculto);
-        if (oculto)
+        if (!oculto)
         {
             transform.GetChild(4).GetChild(1).gameObject.GetComponent<Image>().sprite = ocultar;
             transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().color = new Color32(219, 125, 71, 255);
+            transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().text = "Ocultar";
         }
         else
         {
             transform.GetChild(4).GetChild(1).gameObject.GetComponent<Image>().sprite = exibir;
             transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().color = new Color32(152, 128, 215, 255);
+            transform.GetChild(4).GetChild(0).gameObject.GetComponent<TMP_Text>().text = "Exibir";
         }
         transform.GetChild(4).GetChild(1).gameObject.GetComponent<Image>().SetNativeSize();
     }

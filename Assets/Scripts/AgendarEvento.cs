@@ -61,7 +61,7 @@ public class AgendarEvento : MonoBehaviour
         eventJSON.Add("prioridade", "");
         eventJSON.Add("categoria", "");
         eventJSON.Add("descricao", "");
-        eventJSON.Add("lembrete", "");
+        eventJSON.Add("lembrete", false);
         eventJSON.Add("repeticao", "");
         eventJSON.Add("concluido", false);
 
@@ -85,7 +85,7 @@ public class AgendarEvento : MonoBehaviour
         eventJSON.Add("prioridade", "");
         eventJSON.Add("categoria", "");
         eventJSON.Add("descricao", "");
-        eventJSON.Add("lembrete", "");
+        eventJSON.Add("lembrete", false);
         eventJSON.Add("repeticao", "");
         eventJSON.Add("concluido", false);
         //eventJSON.Add("simples", true);

@@ -205,7 +205,7 @@ public class GameManager : MonoBehaviour
         JSONObject events = (JSONObject)JSON.Parse(jsonString);
         events.Add(eventIndex.ToString(), createdEvent);
         File.WriteAllText(path, events.ToString());
-        //UpdateNotifications();
+        UpdateNotifications();
     }
 
     public void RemoveEvent(int eventIndex)
@@ -232,7 +232,7 @@ public class GameManager : MonoBehaviour
             }
             File.WriteAllText(path, newEvents.ToString());
             UpdateCount();
-            //UpdateNotifications();
+            UpdateNotifications();
         }
     }
 
@@ -247,6 +247,7 @@ public class GameManager : MonoBehaviour
 
         File.WriteAllText(path, file.ToString());
         UpdateCount();
+        UpdateNotifications();
     }
 
     public void Notify(string title, string text, DateTime date)
@@ -295,18 +296,30 @@ public class GameManager : MonoBehaviour
         {
             JSONObject evento = LoadEvent(i);
             bool isSimple = bool.Parse(evento["simples"]);
-            DateTime data = StringToDateTime(evento["dataInicial"], evento["horaInicial"]);
-            if (!HasPassed(data, DateTime.Now))
+            if(evento["dataInicial"] != string.Empty)
             {
-                if (isSimple)
+                DateTime data = StringToDateTime(evento["dataInicial"], evento["horaInicial"]);
+                if (bool.Parse(LoadEventProperty(i, "lembrete")))
                 {
-                    Notify("SMD Toolkit", evento["nome"], data);
-                }
-                else
-                {
-                    DateTime final = StringToDateTime(evento["dataFinal"], evento["horaFinal"]);
-                    Notify("SMD Toolkit", evento["nome"], data);
-                    Notify("SMD Toolkit", "Final do evento: " + evento["nome"], final);
+                    if (!HasPassed(data, DateTime.Now))
+                    {
+                        if (isSimple)
+                        {
+                            if (LoadEventProperty(i, "dataInicial") != string.Empty)
+                            {
+                                Notify("SMD Toolkit", evento["nome"], data);
+                            }
+                        }
+                        else
+                        {
+                            if (LoadEventProperty(i, "dataInicial") != string.Empty && LoadEventProperty(i, "dataFinal") != string.Empty)
+                            {
+                                DateTime final = StringToDateTime(evento["dataFinal"], evento["horaFinal"]);
+                                Notify("SMD Toolkit", evento["nome"], data);
+                                Notify("SMD Toolkit", "Final do evento: " + evento["nome"], final);
+                            }
+                        }
+                    }
                 }
             }
         }

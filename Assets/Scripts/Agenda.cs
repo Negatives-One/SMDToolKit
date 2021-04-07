@@ -56,6 +56,10 @@ public class Agenda : MonoBehaviour
     private GameObject dataButton;
     [SerializeField]
     private GameObject duracaoButton;
+    [SerializeField]
+    private GameObject dataPanel;
+    [SerializeField]
+    private GameObject duracaoPanel;
 
     [SerializeField]
     private TMP_Text dataLabelU;
@@ -72,6 +76,9 @@ public class Agenda : MonoBehaviour
     private TMP_Text timeLabelMF;
 
     [SerializeField]
+    private GameObject definirTempos;
+
+    [SerializeField]
     private Toggle lembrete;
     [SerializeField]
     private Toggle repeticao;
@@ -80,6 +87,9 @@ public class Agenda : MonoBehaviour
     private GameObject avisoPrefab;
 
     public GameObject botaoDisciplinaCategoria;
+
+    [SerializeField]
+    private GameObject avisoPreenchimento;
 
     private void Start()
     {
@@ -402,6 +412,8 @@ public class Agenda : MonoBehaviour
                 DataClick();
                 dataLabelU.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial");
                 timeLabelU.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial");
+                dataPanel.SetActive(true);
+                duracaoPanel.SetActive(false);
             }
             else
             {
@@ -410,49 +422,63 @@ public class Agenda : MonoBehaviour
                 timeLabelMI.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial");
                 dataLabelMF.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal");
                 timeLabelMF.text = GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal");
+                dataPanel.SetActive(false);
+                duracaoPanel.SetActive(true);
             }
         }
+        lembrete.isOn = bool.Parse(GameManager.Instance.LoadEventProperty(actualTaskIndex, "lembrete"));
     }
 
     public void UpdateDateTime()
     {
         if(dataButton.transform.GetChild(1).gameObject.activeSelf == true) //simples, apenas 1 notificação na hora inicial
         {
-            JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
-            evento["simples"] = true;
-            evento["dataInicial"] = dataLabelU.text;
-            evento["horaInicial"] = timeLabelU.text;
-            evento["lembrete"] = lembrete.isOn;
-            evento["repeticao"] = repeticao.isOn;
-            GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
-
-            if (lembrete.isOn)
+            if(dataLabelU.text == string.Empty || timeLabelU.text == string.Empty)
             {
-                DateTime dataHoraOk = GameManager.Instance.StringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
-
-                GameManager.Instance.Notify("SMD Toolkit", GameManager.Instance.LoadEventProperty(actualTaskIndex, "nome"), dataHoraOk);
+                StartCoroutine(AvisoPreenchimento());
             }
-            dataTaskText.text = dataLabelU.text;
+            else
+            {
+                JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+                evento["simples"] = true;
+                evento["dataInicial"] = dataLabelU.text;
+                evento["horaInicial"] = timeLabelU.text;
+                evento["lembrete"] = lembrete.isOn;
+                evento["repeticao"] = repeticao.isOn;
+                GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+                definirTempos.SetActive(false);
+                dataTaskText.text = dataLabelU.text;
+            }
         }
-        else if(duracaoButton.transform.GetChild(1).gameObject.activeSelf == true) //não simples, notificação todo dia na hora inicial
+        else if(duracaoButton.transform.GetChild(1).gameObject.activeSelf == true) //não simples, notificação inicial e final
         {
-            JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
-            evento["simples"] = false;
-            evento["dataInicial"] = dataLabelMI.text;
-            evento["horaInicial"] = timeLabelMI.text;
-            evento["dataFinal"] = dataLabelMF.text;
-            evento["horaFinal"] = timeLabelMF.text;
-            evento["lembrete"] = lembrete.isOn;
-            evento["repeticao"] = false;
-            GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
-
-            if (lembrete.isOn)
+            if(dataLabelMI.text == string.Empty || timeLabelMI.text == string.Empty || dataLabelMF.text == string.Empty || timeLabelMF.text == string.Empty)
             {
-                DateTime initialDate = GameManager.Instance.StringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataInicial"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaInicial"));
-                DateTime finalDate = GameManager.Instance.StringToDateTime(GameManager.Instance.LoadEventProperty(actualTaskIndex, "dataFinal"), GameManager.Instance.LoadEventProperty(actualTaskIndex, "horaFinal"));
-                GameManager.Instance.MultipleNotify(GameManager.Instance.LoadEventProperty(actualTaskIndex, "nome"), initialDate, finalDate);
+                StartCoroutine(AvisoPreenchimento());
+            }
+            else
+            {
+                JSONObject evento = GameManager.Instance.LoadEvent(actualTaskIndex);
+                evento["simples"] = false;
+                evento["dataInicial"] = dataLabelMI.text;
+                evento["horaInicial"] = timeLabelMI.text;
+                evento["dataFinal"] = dataLabelMF.text;
+                evento["horaFinal"] = timeLabelMF.text;
+                evento["lembrete"] = lembrete.isOn;
+                evento["repeticao"] = false;
+                GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
+                definirTempos.SetActive(false);
+                dataTaskText.text = dataLabelMI.text + " - " + dataLabelMF.text;
             }
         }
+        GameManager.Instance.UpdateNotifications();
+    }
+
+    IEnumerator AvisoPreenchimento()
+    {
+        avisoPreenchimento.SetActive(true);
+        yield return new WaitForSeconds(2);
+        avisoPreenchimento.SetActive(false);
     }
 
     public void ShowTask(int index, GameObject prefab)
@@ -504,10 +530,13 @@ public class Agenda : MonoBehaviour
         int NumeroDisciplinas = disciplinas.Count;
         for(int i = 0; i < NumeroDisciplinas; i++)
         {
-            GameObject botao = Instantiate(botaoDisciplinaCategoria, categorias.transform.position, Quaternion.identity, categorias.transform);
-            botao.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = GameManager.Instance.LoadDisciplineProperty(i, "nome");
-            string nome = GameManager.Instance.LoadDisciplineProperty(i, "nome");
-            botao.GetComponent<Button>().onClick.AddListener(delegate { SetCategoria(nome); });
+            if(!bool.Parse(GameManager.Instance.LoadDisciplineProperty(i, "oculto")))
+            {
+                GameObject botao = Instantiate(botaoDisciplinaCategoria, categorias.transform.position, Quaternion.identity, categorias.transform);
+                botao.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = GameManager.Instance.LoadDisciplineProperty(i, "nome");
+                string nome = GameManager.Instance.LoadDisciplineProperty(i, "nome");
+                botao.GetComponent<Button>().onClick.AddListener(delegate { SetCategoria(nome); });
+            }
         }
     }
 
