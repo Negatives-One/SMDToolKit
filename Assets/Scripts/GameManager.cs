@@ -60,7 +60,72 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(!File.Exists(Application.persistentDataPath + "/Quarto.json"))
+        if (!File.Exists(Application.persistentDataPath + "/Disciplinas.json"))
+        {
+            string path = Application.persistentDataPath + "/Disciplinas.json";
+            JSONObject file = new JSONObject();
+
+            JSONObject DesenhoI = new JSONObject();
+            DesenhoI.Add("nome", "Desenho I");
+            DesenhoI.Add("descricao", "A cadeira visa orientar o aluno para treinar suas habilidades em desenho. São diversas atividades que melhoram a noção de dimensionalidade e criatividade do aluno. Os conhecimentos básicos sobre desenho que um profissional de Sistemas e Mídias Digitais deve ter serão abordados na cadeira, desde o entendimento sobre formas e proporção até a noção do uso de cores e a criação de desenhos criativamente.");
+            DesenhoI.Add("perspectiva", "Aprender a desenhar não é necessário apenas para artistas profissionais, como é um conhecimento importante para quem trabalha com jogos, mídias ou design gráfico. Visando trabalhar com mídias, o profissional de SMD deve estar preparado para ter perspectivas realistas sobre propostas gráficas e abordagens publicitárias. Dessa forma, o conhecimento sobre cores e sobre desenho se torna essencial.");
+            DesenhoI.Add("carga", "64 horas");
+            DesenhoI.Add("creditos", "4");
+            DesenhoI.Add("necessario", "Desenho 2, Animações 2D, Concepções de Cenários e Personagens.");
+            DesenhoI.Add("ativo", true);
+
+            file.Add("0", DesenhoI);
+            
+            JSONObject ProgI = new JSONObject();
+            ProgI.Add("nome", "Programação I");
+            ProgI.Add("descricao", string.Empty);
+            ProgI.Add("perspectiva", string.Empty);
+            ProgI.Add("carga", string.Empty);
+            ProgI.Add("creditos", string.Empty);
+            ProgI.Add("necessario", string.Empty);
+            ProgI.Add("ativo", false);
+
+            file.Add("1", ProgI);
+            
+            JSONObject AutoI = new JSONObject();
+            AutoI.Add("nome", "Autoração Multimídia I");
+            AutoI.Add("descricao", string.Empty);
+            AutoI.Add("perspectiva", string.Empty);
+            AutoI.Add("carga", string.Empty);
+            AutoI.Add("creditos", string.Empty);
+            AutoI.Add("necessario", string.Empty);
+            AutoI.Add("ativo", false);
+
+            file.Add("2", AutoI);
+            
+            JSONObject Hist = new JSONObject();
+            Hist.Add("nome", "História do Design");
+            Hist.Add("descricao", string.Empty);
+            Hist.Add("perspectiva", string.Empty);
+            Hist.Add("carga", string.Empty);
+            Hist.Add("creditos", string.Empty);
+            Hist.Add("necessario", string.Empty);
+            Hist.Add("ativo", false);
+
+            file.Add("3", Hist);
+            
+            JSONObject Intr = new JSONObject();
+            Intr.Add("nome", "Introdução a Sistemas e Mídias Digitais");
+            Intr.Add("descricao", string.Empty);
+            Intr.Add("perspectiva", string.Empty);
+            Intr.Add("carga", string.Empty);
+            Intr.Add("creditos", string.Empty);
+            Intr.Add("necessario", string.Empty);
+            Intr.Add("ativo", false);
+
+            file.Add("4", Intr);
+
+
+
+            File.WriteAllText(path, file.ToString());
+        }
+
+        if (!File.Exists(Application.persistentDataPath + "/Quarto.json"))
         {
             JSONObject roomJSON = new JSONObject();
 
@@ -75,17 +140,17 @@ public class GameManager : MonoBehaviour
             File.WriteAllText(path, roomJSON.ToString());
         }
 
-        if (!File.Exists(Application.persistentDataPath + "/Eventos.json"))
-        {
-            NumeroEventos = 0;
-        }
-        else
+        if (File.Exists(Application.persistentDataPath + "/Eventos.json"))
         {
             string path = Application.persistentDataPath + "/Eventos.json";
             string jsonString = File.ReadAllText(path);
             JSONObject events = (JSONObject)JSONObject.Parse(jsonString);
 
             NumeroEventos = events.Count;
+        }
+        else
+        {
+            NumeroEventos = 0;
         }
     }
 
@@ -265,5 +330,15 @@ public class GameManager : MonoBehaviour
         string jsonString = File.ReadAllText(path);
         JSONObject room = (JSONObject)JSON.Parse(jsonString);
         return room;
+    }
+
+    public string LoadDisciplineProperty(int eventIndex, string property)
+    {
+        string eventIndexStr = eventIndex.ToString();
+        string path = Application.persistentDataPath + "/Disciplinas.json";
+        string jsonString = File.ReadAllText(path);
+        JSONObject disciplines = (JSONObject)JSON.Parse(jsonString);
+        JSONObject discipline = (JSONObject)JSON.Parse(disciplines[eventIndex].ToString());
+        return discipline[property];
     }
 }

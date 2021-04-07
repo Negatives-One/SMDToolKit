@@ -53,7 +53,7 @@ public class AgendarEvento : MonoBehaviour
     {
         JSONObject eventJSON = new JSONObject();
         eventJSON.Add("simples", true);
-        eventJSON.Add("nome", "Tarefa" + (GameManager.Instance.NumeroEventos + 1).ToString());
+        eventJSON.Add("nome", "Tarefa" + " " + (GameManager.Instance.NumeroEventos + 1).ToString());
         eventJSON.Add("dataInicial", "");
         eventJSON.Add("horaInicial", "");
         eventJSON.Add("dataFinal", "");
@@ -77,7 +77,7 @@ public class AgendarEvento : MonoBehaviour
     {
         JSONObject eventJSON = new JSONObject();
         eventJSON.Add("simples", true);
-        eventJSON.Add("nome", "Tarefa" + (GameManager.Instance.NumeroEventos + 1).ToString());
+        eventJSON.Add("nome", "Tarefa" + " " + (GameManager.Instance.NumeroEventos + 1).ToString());
         eventJSON.Add("dataInicial", "");//DateTime.Today.ToString("yyyy/MM/dd"));
         eventJSON.Add("horaInicial", "");//DateTime.Today.ToString("HH:mm"));
         eventJSON.Add("dataFinal", "");// DateTime.Today.ToString("yyyy/MM/dd"));

@@ -76,6 +76,9 @@ public class Agenda : MonoBehaviour
     [SerializeField]
     private Toggle repeticao;
 
+    [SerializeField]
+    private GameObject avisoPrefab;
+
     private void Start()
     {
         path = Application.persistentDataPath + "/Eventos.json";
@@ -84,7 +87,7 @@ public class Agenda : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void ShowTarefas()
@@ -220,7 +223,11 @@ public class Agenda : MonoBehaviour
                     Debug.Log("Valor Incorreto");
                     break;
             }
-
+            if(aplicaveis.Count == 0)
+            {
+                GameObject aviso = Instantiate(avisoPrefab, contentTarefa.transform.position, Quaternion.identity, contentTarefa.transform);
+                aviso.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 50);
+            }
             for (int i = 0; i < aplicaveis.Count; i++)
             {
                 GameObject tarefaInstance = Instantiate(tarefa, contentTarefa.transform.position, Quaternion.identity, contentTarefa.transform);
@@ -259,6 +266,15 @@ public class Agenda : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            for (int i = 0; i < contentTarefa.transform.childCount; i++)
+            {
+                Destroy(contentTarefa.transform.GetChild(i).gameObject);
+            }
+            GameObject aviso = Instantiate(avisoPrefab, contentTarefa.transform.position, Quaternion.identity, contentTarefa.transform);
+            aviso.GetComponent<RectTransform>().sizeDelta = new Vector2(800, 50);
+        }
     }
 
     public void OpenTaskPanel(int taskIndex)
@@ -296,6 +312,11 @@ public class Agenda : MonoBehaviour
         }
     }
 
+    public void OpenTaskPanelWithNewTask()
+    {
+        OpenTaskPanel(GameManager.Instance.NumeroEventos - 1);
+    }
+
     private void ResetTaskPanel()
     {
         taskToggle.transform.GetChild(0).gameObject.SetActive(false);
@@ -303,8 +324,8 @@ public class Agenda : MonoBehaviour
         taskDescription.text = string.Empty;
         //Prioridade Reset
         prioridadeButtonText.text = "Prioridade";
-        prioridadeButtonText.color = Color.red;
-        prioridadeButtonImage.color = Color.red;
+        prioridadeButtonText.color = new Color32(152, 128, 215, 255);//Color.red;
+        prioridadeButtonImage.color = new Color32(152, 128, 215, 255);
         //Categoria Reset
         categoriaButtonText.text = "Categoria";
         //Data Reset

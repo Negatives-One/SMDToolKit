@@ -22,6 +22,7 @@ public class LoginScript : MonoBehaviour
     private GameObject splash;
     void Start()
     {
+        Debug.Log(GameManager.Instance.NumeroEventos);
     }
 
     public void CheckLogin()

@@ -43,6 +43,7 @@ public class Quarto : MonoBehaviour
             if (room["Mesa"] == 1)
             {
                 Mesa.sprite = Diferente[0];
+                Mesa.SetNativeSize();
             }
             if (room["Quadro"] == 1)
             {
