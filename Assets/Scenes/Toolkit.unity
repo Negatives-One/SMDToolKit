@@ -1458,7 +1458,7 @@ MonoBehaviour:
   m_Placeholder: {fileID: 0}
   m_ItemText: {fileID: 1974514562}
   m_ItemImage: {fileID: 0}
-  m_Value: 2
+  m_Value: 0
   m_Options:
     m_Options:
     - m_Text: Mesa
@@ -19319,7 +19319,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Prateleira
+  m_text: Mesa
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ed00fdf3109a5654d86451031820683e, type: 2}
   m_sharedMaterial: {fileID: -2445805178751763852, guid: ed00fdf3109a5654d86451031820683e, type: 2}

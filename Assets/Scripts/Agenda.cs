@@ -468,7 +468,7 @@ public class Agenda : MonoBehaviour
                 evento["repeticao"] = false;
                 GameManager.Instance.UpdateEvent(actualTaskIndex, evento);
                 definirTempos.SetActive(false);
-                dataTaskText.text = dataLabelMI.text + " - " + dataLabelMF.text;
+                dataTaskText.text = dataLabelMI.text + "\n" + dataLabelMF.text;
             }
         }
         GameManager.Instance.UpdateNotifications();
