@@ -32,25 +32,7 @@ public class GameManager : MonoBehaviour
 
     public string username;
 
-    private int LoadingSceneNumber = 1;
-
-    private int TargetScene;
-
     public int NumeroEventos;
-
-    public int GetLoadingSceneNumber
-    {
-        get { return LoadingSceneNumber; }
-    }
-
-    public int GetTargetScene
-    {
-        get { return TargetScene; }
-    }
-    public int SetTargetScene
-    {
-        set { TargetScene = value; }
-    }
 
     private void Awake()
     {
