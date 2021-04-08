@@ -26,7 +26,7 @@ Aqui estão as tecnologias utilizadas neste projeto.
 
 ## Instalação
  
-Na pasta Bin está presente a última build em formato APK para a instalação em dispositivos **Android** e **IOS**.
+Na pasta Bin está presente a última build em formato APK para a instalação em dispositivos **Android**.
 
 ## Mapeamento de Funcionalidades
 
